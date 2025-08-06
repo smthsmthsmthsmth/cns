@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Play, Bookmark } from "lucide-react";
+import { Play, Bookmark, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { Video } from "@shared/schema";
@@ -10,6 +10,12 @@ interface VideoPlayerProps {
 
 export default function VideoPlayer({ videos }: VideoPlayerProps) {
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+
+  const handleVideoClick = (video: Video) => {
+    setSelectedVideo(video);
+    // Open video in new tab
+    window.open(video.url, '_blank');
+  };
 
   return (
     <Card>
@@ -28,7 +34,7 @@ export default function VideoPlayer({ videos }: VideoPlayerProps) {
             <div 
               key={video.id}
               className="group cursor-pointer"
-              onClick={() => setSelectedVideo(video)}
+              onClick={() => handleVideoClick(video)}
             >
               <div className="relative rounded-lg overflow-hidden mb-3">
                 {video.thumbnailUrl ? (

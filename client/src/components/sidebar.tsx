@@ -71,15 +71,15 @@ export default function Sidebar() {
         <div className="p-4 space-y-2">
           {navItems.map((item) => (
             <Link key={item.path} href={item.path}>
-              <a className={cn(
-                "flex items-center px-3 py-2 rounded-lg font-medium transition-colors",
+              <div className={cn(
+                "flex items-center px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer",
                 location === item.path
                   ? "bg-medical-blue text-white"
                   : "text-gray-700 hover:bg-gray-100"
               )}>
                 <item.icon className="w-5 h-5 mr-3" />
                 {item.label}
-              </a>
+              </div>
             </Link>
           ))}
         </div>

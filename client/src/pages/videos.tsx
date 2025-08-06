@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Play, Bookmark } from "lucide-react";
+import { Play, Bookmark, ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import SearchBar from "@/components/search-bar";
@@ -20,6 +20,11 @@ export default function Videos() {
     return topic?.name || "Unknown Topic";
   };
 
+  const handleVideoClick = (video: Video) => {
+    // Open video in new tab
+    window.open(video.url, '_blank');
+  };
+
   return (
     <>
       <header className="bg-white border-b border-gray-200 px-6 py-4">
@@ -36,7 +41,7 @@ export default function Videos() {
       <main className="flex-1 overflow-y-auto p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {videos.map((video) => (
-            <Card key={video.id} className="hover:shadow-md transition-shadow cursor-pointer group">
+            <Card key={video.id} className="hover:shadow-md transition-shadow cursor-pointer group" onClick={() => handleVideoClick(video)}>
               <div className="relative">
                 {video.thumbnailUrl ? (
                   <img 

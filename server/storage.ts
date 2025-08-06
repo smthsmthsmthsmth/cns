@@ -68,7 +68,7 @@ export class MemStorage implements IStorage {
   private scheduleItems: Map<string, ScheduleItem>;
   private bookmarks: Map<string, Bookmark>;
   private notes: Map<string, Note>;
-  private studyProgress: StudyProgress;
+  private studyProgress!: StudyProgress;
 
   constructor() {
     this.topics = new Map();
@@ -95,7 +95,14 @@ export class MemStorage implements IStorage {
 
     defaultTopics.forEach(topic => {
       const id = randomUUID();
-      this.topics.set(id, { ...topic, id });
+      this.topics.set(id, { 
+        id, 
+        name: topic.name,
+        description: topic.description,
+        progress: topic.progress,
+        status: topic.status,
+        order: topic.order
+      });
     });
 
     // Initialize study progress
@@ -108,6 +115,206 @@ export class MemStorage implements IStorage {
       bookmarkCount: 8,
       updatedAt: new Date(),
     };
+
+    // Initialize sample videos
+    this.initializeSampleVideos();
+    
+    // Initialize sample schedule items
+    this.initializeSampleSchedule();
+    
+    // Initialize sample notes
+    this.initializeSampleNotes();
+    
+    // Initialize sample bookmarks
+    this.initializeSampleBookmarks();
+  }
+
+  private initializeSampleVideos() {
+    const topicIds = Array.from(this.topics.keys());
+    const sampleVideos = [
+      {
+        topicId: topicIds[0], // Neuroanatomy
+        title: "Central Nervous System Overview",
+        description: "Comprehensive overview of the central nervous system structure and function",
+        url: "https://www.youtube.com/watch?v=qPix_X-9t7E",
+        platform: "YouTube",
+        duration: "45:32",
+        thumbnailUrl: null
+      },
+      {
+        topicId: topicIds[0], // Neuroanatomy
+        title: "Brain Anatomy - Cerebral Cortex",
+        description: "Detailed exploration of cerebral cortex anatomy and functional areas",
+        url: "https://www.youtube.com/watch?v=HVGlfcP3ATI",
+        platform: "YouTube",
+        duration: "28:15",
+        thumbnailUrl: null
+      },
+      {
+        topicId: topicIds[1], // Neurophysiology
+        title: "Action Potentials and Neural Signaling",
+        description: "Understanding how neurons communicate through electrical signals",
+        url: "https://www.youtube.com/watch?v=oa6rvUJlg7o",
+        platform: "Khan Academy",
+        duration: "12:45",
+        thumbnailUrl: null
+      },
+      {
+        topicId: topicIds[2], // Neuropharmacology
+        title: "Neurotransmitters and Synaptic Transmission",
+        description: "How chemical signals work in the nervous system",
+        url: "https://www.youtube.com/watch?v=WhowH0kb7n0",
+        platform: "Osmosis",
+        duration: "35:20",
+        thumbnailUrl: null
+      }
+    ];
+
+    sampleVideos.forEach(video => {
+      const id = randomUUID();
+      this.videos.set(id, {
+        id,
+        topicId: video.topicId,
+        title: video.title,
+        description: video.description,
+        url: video.url,
+        platform: video.platform,
+        duration: video.duration,
+        thumbnailUrl: video.thumbnailUrl,
+        addedAt: new Date()
+      });
+    });
+  }
+
+  private initializeSampleSchedule() {
+    const topicIds = Array.from(this.topics.keys());
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const sampleSchedule = [
+      {
+        topicId: topicIds[0],
+        title: "Review Neuroanatomy Lectures",
+        description: "Go through lecture slides and take notes on key structures",
+        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0),
+        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 10, 30),
+        status: "completed"
+      },
+      {
+        topicId: topicIds[1],
+        title: "Study Action Potentials",
+        description: "Watch videos and practice problem sets on neural signaling",
+        startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 14, 0),
+        endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 16, 0),
+        status: "in-progress"
+      },
+      {
+        topicId: topicIds[2],
+        title: "Neuropharmacology Reading",
+        description: "Read chapter 8-10 in the textbook",
+        startTime: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 10, 0),
+        endTime: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 12, 0),
+        status: "not-started"
+      }
+    ];
+
+    sampleSchedule.forEach(item => {
+      const id = randomUUID();
+      this.scheduleItems.set(id, {
+        id,
+        topicId: item.topicId,
+        title: item.title,
+        description: item.description,
+        startTime: item.startTime,
+        endTime: item.endTime,
+        status: item.status,
+        createdAt: new Date()
+      });
+    });
+  }
+
+  private initializeSampleNotes() {
+    const topicIds = Array.from(this.topics.keys());
+    const sampleNotes = [
+      {
+        topicId: topicIds[0], // Neuroanatomy
+        title: "Key Brain Structures",
+        content: "Important structures to remember:\n\n1. Cerebral Cortex - Outer layer of the brain, responsible for complex thinking\n2. Cerebellum - Balance and coordination\n3. Brain Stem - Controls vital functions like breathing and heart rate\n4. Thalamus - Relay station for sensory information\n5. Hypothalamus - Regulates hormones and basic drives\n\nNote: The blood-brain barrier protects the brain from toxins but also makes drug delivery challenging."
+      },
+      {
+        topicId: topicIds[1], // Neurophysiology
+        title: "Action Potential Steps",
+        content: "Action Potential Process:\n\n1. Resting potential: -70mV\n2. Depolarization: Na+ channels open, membrane becomes positive\n3. Repolarization: K+ channels open, Na+ channels close\n4. Hyperpolarization: Brief overshoot below resting potential\n5. Return to resting potential\n\nKey concept: All-or-nothing principle - action potentials are binary events."
+      },
+      {
+        topicId: topicIds[2], // Neuropharmacology
+        title: "Major Neurotransmitters",
+        content: "Important neurotransmitters and their functions:\n\n• Dopamine - Reward, motivation, movement control\n• Serotonin - Mood regulation, sleep, appetite\n• GABA - Primary inhibitory neurotransmitter\n• Glutamate - Primary excitatory neurotransmitter\n• Acetylcholine - Muscle contraction, memory\n• Norepinephrine - Alertness, arousal\n\nRemember: Many psychiatric medications target these systems."
+      }
+    ];
+
+    sampleNotes.forEach(note => {
+      const id = randomUUID();
+      const now = new Date();
+      this.notes.set(id, {
+        id,
+        topicId: note.topicId,
+        title: note.title,
+        content: note.content,
+        createdAt: now,
+        updatedAt: now
+      });
+    });
+  }
+
+  private initializeSampleBookmarks() {
+    const videoIds = Array.from(this.videos.keys());
+    const noteIds = Array.from(this.notes.keys());
+    
+    const sampleBookmarks = [
+      {
+        type: "video",
+        resourceId: videoIds[0] || "sample-video-1",
+        title: "CNS Overview Video",
+        description: "Comprehensive overview of central nervous system",
+        timestamp: "15:30"
+      },
+      {
+        type: "video", 
+        resourceId: videoIds[1] || "sample-video-2",
+        title: "Brain Anatomy Deep Dive",
+        description: "Detailed cortex anatomy explanation",
+        timestamp: "22:45"
+      },
+      {
+        type: "note",
+        resourceId: noteIds[0] || "sample-note-1", 
+        title: "Brain Structures Summary",
+        description: "Quick reference for key anatomical structures"
+      },
+      {
+        type: "pdf",
+        resourceId: "sample-pdf-1",
+        title: "Neuroanatomy Chapter 3",
+        description: "Important diagrams and explanations",
+        pageNumber: 45
+      }
+    ];
+
+    sampleBookmarks.forEach(bookmark => {
+      const id = randomUUID();
+      this.bookmarks.set(id, {
+        id,
+        type: bookmark.type,
+        resourceId: bookmark.resourceId,
+        title: bookmark.title,
+        description: bookmark.description,
+        pageNumber: bookmark.pageNumber || null,
+        timestamp: bookmark.timestamp || null,
+        createdAt: new Date()
+      });
+    });
   }
 
   // Topics
@@ -121,7 +328,14 @@ export class MemStorage implements IStorage {
 
   async createTopic(insertTopic: InsertTopic): Promise<Topic> {
     const id = randomUUID();
-    const topic: Topic = { ...insertTopic, id };
+    const topic: Topic = { 
+      id,
+      name: insertTopic.name,
+      description: insertTopic.description || null,
+      progress: insertTopic.progress || 0,
+      status: insertTopic.status || "not-started",
+      order: insertTopic.order || 0
+    };
     this.topics.set(id, topic);
     return topic;
   }
@@ -130,7 +344,11 @@ export class MemStorage implements IStorage {
     const existing = this.topics.get(id);
     if (!existing) throw new Error("Topic not found");
     
-    const updated = { ...existing, ...updates };
+    const updated: Topic = { 
+      ...existing, 
+      ...updates,
+      description: updates.description !== undefined ? updates.description : existing.description
+    };
     this.topics.set(id, updated);
     return updated;
   }
@@ -154,7 +372,16 @@ export class MemStorage implements IStorage {
 
   async createStudyGuide(insertGuide: InsertStudyGuide): Promise<StudyGuide> {
     const id = randomUUID();
-    const guide: StudyGuide = { ...insertGuide, id, uploadedAt: new Date() };
+    const guide: StudyGuide = { 
+      id, 
+      topicId: insertGuide.topicId || null,
+      title: insertGuide.title,
+      fileName: insertGuide.fileName,
+      filePath: insertGuide.filePath,
+      totalPages: insertGuide.totalPages || null,
+      currentPage: insertGuide.currentPage || null,
+      uploadedAt: new Date()
+    };
     this.studyGuides.set(id, guide);
     return guide;
   }
@@ -187,7 +414,17 @@ export class MemStorage implements IStorage {
 
   async createVideo(insertVideo: InsertVideo): Promise<Video> {
     const id = randomUUID();
-    const video: Video = { ...insertVideo, id, addedAt: new Date() };
+    const video: Video = { 
+      id,
+      topicId: insertVideo.topicId || null,
+      title: insertVideo.title,
+      description: insertVideo.description || null,
+      url: insertVideo.url,
+      platform: insertVideo.platform || null,
+      duration: insertVideo.duration || null,
+      thumbnailUrl: insertVideo.thumbnailUrl || null,
+      addedAt: new Date()
+    };
     this.videos.set(id, video);
     return video;
   }
@@ -225,7 +462,16 @@ export class MemStorage implements IStorage {
 
   async createScheduleItem(insertItem: InsertScheduleItem): Promise<ScheduleItem> {
     const id = randomUUID();
-    const item: ScheduleItem = { ...insertItem, id, createdAt: new Date() };
+    const item: ScheduleItem = { 
+      id,
+      topicId: insertItem.topicId || null,
+      title: insertItem.title,
+      description: insertItem.description || null,
+      startTime: insertItem.startTime,
+      endTime: insertItem.endTime,
+      status: insertItem.status || "not-started",
+      createdAt: new Date()
+    };
     this.scheduleItems.set(id, item);
     return item;
   }
@@ -254,7 +500,16 @@ export class MemStorage implements IStorage {
 
   async createBookmark(insertBookmark: InsertBookmark): Promise<Bookmark> {
     const id = randomUUID();
-    const bookmark: Bookmark = { ...insertBookmark, id, createdAt: new Date() };
+    const bookmark: Bookmark = { 
+      id,
+      type: insertBookmark.type,
+      resourceId: insertBookmark.resourceId,
+      title: insertBookmark.title,
+      description: insertBookmark.description || null,
+      pageNumber: insertBookmark.pageNumber || null,
+      timestamp: insertBookmark.timestamp || null,
+      createdAt: new Date()
+    };
     this.bookmarks.set(id, bookmark);
     return bookmark;
   }
@@ -290,7 +545,14 @@ export class MemStorage implements IStorage {
   async createNote(insertNote: InsertNote): Promise<Note> {
     const id = randomUUID();
     const now = new Date();
-    const note: Note = { ...insertNote, id, createdAt: now, updatedAt: now };
+    const note: Note = { 
+      id,
+      topicId: insertNote.topicId || null,
+      title: insertNote.title,
+      content: insertNote.content,
+      createdAt: now,
+      updatedAt: now
+    };
     this.notes.set(id, note);
     return note;
   }

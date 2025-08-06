@@ -1,6 +1,6 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
-import multer from "multer";
+import multer, { type FileFilterCallback } from "multer";
 import path from "path";
 import { storage } from "./storage";
 import { 
@@ -17,7 +17,7 @@ import { z } from "zod";
 // Configure multer for PDF uploads
 const upload = multer({
   dest: 'uploads/',
-  fileFilter: (req, file, cb) => {
+  fileFilter: (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
     if (file.mimetype === 'application/pdf') {
       cb(null, true);
     } else {
@@ -120,7 +120,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/study-guides/upload", upload.single('pdf'), async (req, res) => {
+  app.post("/api/study-guides/upload", upload.single('pdf'), async (req: Request & { file?: Express.Multer.File }, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: "No PDF file uploaded" });
