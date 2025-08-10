@@ -1,0 +1,617 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNS Study Planner - Medical Education Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    'roboto': ['Roboto', 'sans-serif'],
+                },
+                colors: {
+                    'medical-blue': '#1976D2',
+                    'success-green': '#388E3C',
+                    'highlight-orange': '#FF5722',
+                    'complete-green': '#4CAF50',
+                    'progress-yellow': '#FFC107',
+                    'not-started-gray': '#9E9E9E',
+                }
+            }
+        }
+    };
+    </script>
+    <style>
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        .progress-ring-circle {
+            transition: stroke-dasharray 0.35s;
+        }
+        .pdf-viewer-placeholder {
+            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-roboto">
+    <!-- @COMPONENT: AppLayout -->
+    <div class="min-h-screen flex">
+        <!-- Sidebar Navigation -->
+        <!-- @COMPONENT: Sidebar -->
+        <div class="w-80 bg-white border-r border-gray-200 flex flex-col">
+            <!-- Header -->
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-medical-blue rounded-lg flex items-center justify-center">
+                        <i class="fas fa-brain text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-medium text-gray-900">CNS Study Planner</h1>
+                        <p class="text-sm text-gray-500">Central Nervous System Module</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study Progress Overview -->
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-sm font-medium text-gray-900 mb-3">Overall Progress</h3>
+                <div class="flex items-center space-x-4">
+                    <!-- @FUNCTIONALITY: Circular progress indicator showing overall completion -->
+                    <div class="relative w-16 h-16">
+                        <svg class="w-16 h-16 progress-ring">
+                            <circle cx="32" cy="32" r="28" stroke="#E5E7EB" stroke-width="4" fill="transparent"/>
+                            <circle cx="32" cy="32" r="28" stroke="#4CAF50" stroke-width="4" fill="transparent"
+                                    stroke-dasharray="176" stroke-dashoffset="44" class="progress-ring-circle"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-sm font-medium text-gray-900" data-bind="overallProgress">75%</span>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="text-sm text-gray-600">12 of 16 topics completed</div>
+                        <div class="text-xs text-gray-500 mt-1">4 topics remaining</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="flex-1 overflow-y-auto">
+                <div class="p-4 space-y-2">
+                    <a href="#" class="flex items-center px-3 py-2 rounded-lg bg-medical-blue text-white font-medium">
+                        <i class="fas fa-home w-5 text-center mr-3"></i>
+                        Dashboard
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-book w-5 text-center mr-3"></i>
+                        Study Guides
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-play-circle w-5 text-center mr-3"></i>
+                        Video Resources
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-calendar-alt w-5 text-center mr-3"></i>
+                        Study Schedule
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-bookmark w-5 text-center mr-3"></i>
+                        Bookmarks
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-sticky-note w-5 text-center mr-3"></i>
+                        Notes
+                    </a>
+                </div>
+
+                <!-- CNS Topics Section -->
+                <div class="p-4">
+                    <h3 class="text-sm font-medium text-gray-900 mb-3">CNS Topics</h3>
+                    <div class="space-y-2">
+                        <!-- @MAP: cnsTopics.map(topic => ( -->
+                        <div class="topic-item">
+                            <a href="#" class="flex items-center justify-between px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                                <div class="flex items-center">
+                                    <div class="w-2 h-2 rounded-full bg-complete-green mr-3"></div>
+                                    <span class="text-sm">Neuroanatomy</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-xs text-gray-400"></i>
+                            </a>
+                        </div>
+                        <div class="topic-item">
+                            <a href="#" class="flex items-center justify-between px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                                <div class="flex items-center">
+                                    <div class="w-2 h-2 rounded-full bg-complete-green mr-3"></div>
+                                    <span class="text-sm">Neurophysiology</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-xs text-gray-400"></i>
+                            </a>
+                        </div>
+                        <div class="topic-item">
+                            <a href="#" class="flex items-center justify-between px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                                <div class="flex items-center">
+                                    <div class="w-2 h-2 rounded-full bg-progress-yellow mr-3"></div>
+                                    <span class="text-sm">Neuropharmacology</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-xs text-gray-400"></i>
+                            </a>
+                        </div>
+                        <div class="topic-item">
+                            <a href="#" class="flex items-center justify-between px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                                <div class="flex items-center">
+                                    <div class="w-2 h-2 rounded-full bg-not-started-gray mr-3"></div>
+                                    <span class="text-sm">Neuropathology</span>
+                                </div>
+                                <i class="fas fa-chevron-right text-xs text-gray-400"></i>
+                            </a>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+            </nav>
+            <!-- @END_COMPONENT: Sidebar -->
+        </div>
+
+        <!-- Main Content Area -->
+        <!-- @COMPONENT: MainContent -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Header -->
+            <!-- @COMPONENT: TopHeader -->
+            <header class="bg-white border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-medium text-gray-900">Dashboard</h2>
+                        <p class="text-gray-600">Welcome back! Continue your CNS studies</p>
+                    </div>
+                    
+                    <!-- Search Bar -->
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                            <input type="text" 
+                                   placeholder="Search topics, videos, notes..." 
+                                   class="block w-80 pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-medical-blue focus:border-medical-blue">
+                        </div>
+                        
+                        <!-- Upload PDF Button -->
+                        <button class="bg-medical-blue text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-upload mr-2"></i>
+                            Upload PDF
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <!-- @END_COMPONENT: TopHeader -->
+
+            <!-- Main Dashboard Content -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Quick Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- @MAP: statsCards.map(card => ( -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-medical-blue bg-opacity-10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-book-open text-medical-blue text-lg"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Topics Completed</p>
+                                <p class="text-2xl font-semibold text-gray-900" data-bind="completedTopics">12</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-success-green bg-opacity-10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-success-green text-lg"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Study Hours</p>
+                                <p class="text-2xl font-semibold text-gray-900" data-bind="studyHours">47</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-highlight-orange bg-opacity-10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-play text-highlight-orange text-lg"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Videos Watched</p>
+                                <p class="text-2xl font-semibold text-gray-900" data-bind="videosWatched">23</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-purple-500 bg-opacity-10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-bookmark text-purple-500 text-lg"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Bookmarks</p>
+                                <p class="text-2xl font-semibold text-gray-900" data-bind="bookmarkCount">8</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+
+                <!-- Main Content Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Left Column - Current Study Focus -->
+                    <div class="lg:col-span-2 space-y-8">
+                        <!-- Current Study Guide -->
+                        <!-- @COMPONENT: StudyGuideViewer -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="p-6 border-b border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="text-lg font-medium text-gray-900">Current Study Guide</h3>
+                                        <p class="text-sm text-gray-600 mt-1">Neuropharmacology - Chapter 3: Synaptic Transmission</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button class="p-2 text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-bookmark"></i>
+                                        </button>
+                                        <button class="p-2 text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-note-sticky"></i>
+                                        </button>
+                                        <button class="p-2 text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-expand"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- PDF Viewer Mockup -->
+                            <div class="p-6">
+                                <div class="pdf-viewer-placeholder rounded-lg border-2 border-dashed border-gray-300 h-96 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <i class="fas fa-file-pdf text-red-500 text-4xl mb-4"></i>
+                                        <h4 class="text-lg font-medium text-gray-900 mb-2">PDF Viewer Integration</h4>
+                                        <p class="text-gray-600 mb-4">University study guide will be displayed here</p>
+                                        <!-- @FUNCTIONALITY: PDF.js integration for displaying uploaded study guides -->
+                                        <button class="bg-medical-blue text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors" data-implementation="Should open file upload dialog">
+                                            <i class="fas fa-upload mr-2"></i>
+                                            Upload Study Guide
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Progress Indicator -->
+                                <div class="mt-4 flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm text-gray-600">Page 15 of 45</span>
+                                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-medical-blue h-2 rounded-full" style="width: 33%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button class="p-2 text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                        <button class="p-2 text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_COMPONENT: StudyGuideViewer -->
+
+                        <!-- Related Videos Section -->
+                        <!-- @COMPONENT: VideoResources -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="p-6 border-b border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-lg font-medium text-gray-900">Related Videos</h3>
+                                    <a href="#" class="text-medical-blue hover:text-blue-700 text-sm font-medium">View All</a>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <!-- @MAP: relatedVideos.map(video => ( -->
+                                    <div class="group cursor-pointer">
+                                        <div class="relative rounded-lg overflow-hidden mb-3">
+                                            <!-- Medical education video thumbnail showing neural synapses diagram -->
+                                            <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=225" 
+                                                 alt="Neuropharmacology lecture thumbnail" 
+                                                 class="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-200" 
+                                                 data-mock="true">
+                                            <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div class="w-12 h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-play text-gray-800 ml-1"></i>
+                                                </div>
+                                            </div>
+                                            <div class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+                                                12:45
+                                            </div>
+                                        </div>
+                                        <h4 class="font-medium text-gray-900 mb-1" data-bind="video.title">Synaptic Transmission Basics</h4>
+                                        <p class="text-sm text-gray-600 mb-2" data-bind="video.description">Understanding neurotransmitter release</p>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-gray-500" data-bind="video.source">Khan Academy</span>
+                                            <div class="flex items-center space-x-2">
+                                                <button class="text-gray-400 hover:text-gray-600">
+                                                    <i class="fas fa-bookmark text-xs"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="group cursor-pointer">
+                                        <div class="relative rounded-lg overflow-hidden mb-3">
+                                            <!-- Medical education video showing brain anatomy -->
+                                            <img src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=225" 
+                                                 alt="Brain anatomy lecture thumbnail" 
+                                                 class="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-200" 
+                                                 data-mock="true">
+                                            <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div class="w-12 h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-play text-gray-800 ml-1"></i>
+                                                </div>
+                                            </div>
+                                            <div class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+                                                18:22
+                                            </div>
+                                        </div>
+                                        <h4 class="font-medium text-gray-900 mb-1" data-bind="video.title">GABA and Glutamate Systems</h4>
+                                        <p class="text-sm text-gray-600 mb-2" data-bind="video.description">Major neurotransmitter pathways</p>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-gray-500" data-bind="video.source">Osmosis</span>
+                                            <div class="flex items-center space-x-2">
+                                                <button class="text-gray-400 hover:text-gray-600">
+                                                    <i class="fas fa-bookmark text-xs"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- @END_MAP )) -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_COMPONENT: VideoResources -->
+                    </div>
+
+                    <!-- Right Column - Study Planning & Progress -->
+                    <div class="space-y-8">
+                        <!-- Study Schedule Widget -->
+                        <!-- @COMPONENT: StudySchedule -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="p-6 border-b border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-lg font-medium text-gray-900">Today's Schedule</h3>
+                                    <button class="text-medical-blue hover:text-blue-700 text-sm font-medium">
+                                        <i class="fas fa-calendar-plus mr-1"></i>
+                                        Add Task
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6">
+                                <div class="space-y-4">
+                                    <!-- @MAP: todaySchedule.map(task => ( -->
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-2 h-2 bg-complete-green rounded-full mt-2"></div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 line-through" data-bind="task.title">Review Neurotransmitter Types</p>
+                                            <p class="text-xs text-gray-500" data-bind="task.time">9:00 AM - 10:30 AM</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-2 h-2 bg-progress-yellow rounded-full mt-2"></div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900" data-bind="task.title">Watch GABA Pathway Video</p>
+                                            <p class="text-xs text-gray-500" data-bind="task.time">11:00 AM - 12:00 PM</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-2 h-2 bg-not-started-gray rounded-full mt-2"></div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900" data-bind="task.title">Practice Questions: Synapses</p>
+                                            <p class="text-xs text-gray-500" data-bind="task.time">2:00 PM - 3:30 PM</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-2 h-2 bg-not-started-gray rounded-full mt-2"></div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900" data-bind="task.title">Review Lecture Notes</p>
+                                            <p class="text-xs text-gray-500" data-bind="task.time">4:00 PM - 5:00 PM</p>
+                                        </div>
+                                    </div>
+                                    <!-- @END_MAP )) -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_COMPONENT: StudySchedule -->
+
+                        <!-- Topic Progress Tracker -->
+                        <!-- @COMPONENT: TopicProgress -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="p-6 border-b border-gray-200">
+                                <h3 class="text-lg font-medium text-gray-900">Topic Progress</h3>
+                            </div>
+                            
+                            <div class="p-6">
+                                <div class="space-y-4">
+                                    <!-- @MAP: topicProgress.map(topic => ( -->
+                                    <div>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-sm font-medium text-gray-900" data-bind="topic.name">Neuroanatomy</span>
+                                            <span class="text-sm text-gray-600" data-bind="topic.progress">100%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-complete-green h-2 rounded-full" style="width: 100%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-sm font-medium text-gray-900" data-bind="topic.name">Neurophysiology</span>
+                                            <span class="text-sm text-gray-600" data-bind="topic.progress">90%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-complete-green h-2 rounded-full" style="width: 90%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-sm font-medium text-gray-900" data-bind="topic.name">Neuropharmacology</span>
+                                            <span class="text-sm text-gray-600" data-bind="topic.progress">65%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-progress-yellow h-2 rounded-full" style="width: 65%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-sm font-medium text-gray-900" data-bind="topic.name">Neuropathology</span>
+                                            <span class="text-sm text-gray-600" data-bind="topic.progress">0%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-not-started-gray h-2 rounded-full" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                    <!-- @END_MAP )) -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_COMPONENT: TopicProgress -->
+
+                        <!-- Recent Bookmarks -->
+                        <!-- @COMPONENT: RecentBookmarks -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="p-6 border-b border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-lg font-medium text-gray-900">Recent Bookmarks</h3>
+                                    <a href="#" class="text-medical-blue hover:text-blue-700 text-sm font-medium">View All</a>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6">
+                                <div class="space-y-3">
+                                    <!-- @MAP: recentBookmarks.map(bookmark => ( -->
+                                    <div class="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                        <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-bookmark text-yellow-600 text-sm"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate" data-bind="bookmark.title">Action Potential Mechanics</p>
+                                            <p class="text-xs text-gray-500" data-bind="bookmark.source">Page 23, Neurophysiology Guide</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-play text-blue-600 text-sm"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate" data-bind="bookmark.title">Dopamine Pathways Video</p>
+                                            <p class="text-xs text-gray-500" data-bind="bookmark.source">Khan Academy, 15:30</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-sticky-note text-green-600 text-sm"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate" data-bind="bookmark.title">My Study Note</p>
+                                            <p class="text-xs text-gray-500" data-bind="bookmark.source">Neurotransmitter Summary</p>
+                                        </div>
+                                    </div>
+                                    <!-- @END_MAP )) -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_COMPONENT: RecentBookmarks -->
+                    </div>
+                </div>
+            </main>
+        </div>
+        <!-- @END_COMPONENT: MainContent -->
+    </div>
+    <!-- @END_COMPONENT: AppLayout -->
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        (function() {
+            // Basic interactivity for demonstration
+            document.addEventListener('DOMContentLoaded', function() {
+                // Search functionality placeholder
+                const searchInput = document.querySelector('input[type="text"]');
+                if (searchInput) {
+                    searchInput.addEventListener('input', function() {
+                        // TODO: Implement search functionality
+                        console.log('Search query:', this.value);
+                    });
+                }
+
+                // Upload button interaction
+                const uploadButton = document.querySelector('button:contains("Upload PDF")');
+                // TODO: Implement PDF upload functionality with file validation
+                
+                // Video play button interactions
+                const videoThumbnails = document.querySelectorAll('.group');
+                videoThumbnails.forEach(thumbnail => {
+                    thumbnail.addEventListener('click', function() {
+                        // TODO: Implement video player modal or navigation
+                        console.log('Video clicked');
+                    });
+                });
+
+                // Navigation interactions
+                const navLinks = document.querySelectorAll('nav a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        // Remove active class from all links
+                        navLinks.forEach(l => l.classList.remove('bg-medical-blue', 'text-white'));
+                        navLinks.forEach(l => l.classList.add('text-gray-700'));
+                        
+                        // Add active class to clicked link
+                        this.classList.remove('text-gray-700');
+                        this.classList.add('bg-medical-blue', 'text-white');
+                        
+                        // TODO: Implement page navigation
+                        console.log('Navigate to:', this.textContent.trim());
+                    });
+                });
+
+                // Bookmark interactions
+                const bookmarkButtons = document.querySelectorAll('.fa-bookmark');
+                bookmarkButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Toggle bookmark state
+                        this.classList.toggle('fas');
+                        this.classList.toggle('far');
+                        
+                        // TODO: Implement bookmark persistence
+                        console.log('Bookmark toggled');
+                    });
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

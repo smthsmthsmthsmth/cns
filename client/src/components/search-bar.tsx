@@ -1,14 +1,10 @@
 import { useState } from "react";
-import { Search, Upload } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
+import PdfUpload from "./pdf-upload";
 
-interface SearchBarProps {
-  onUploadClick: () => void;
-}
-
-export default function SearchBar({ onUploadClick }: SearchBarProps) {
+export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: searchResults, refetch } = useQuery({
@@ -38,13 +34,7 @@ export default function SearchBar({ onUploadClick }: SearchBarProps) {
         />
       </div>
       
-      <Button 
-        onClick={onUploadClick}
-        className="bg-medical-blue text-white hover:bg-blue-700"
-      >
-        <Upload className="w-4 h-4 mr-2" />
-        Upload PDF
-      </Button>
+      <PdfUpload />
     </div>
   );
 }

@@ -3,6 +3,8 @@ import { StickyNote, Edit, Trash2, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import SearchBar from "@/components/search-bar";
+import NoteForm from "@/components/note-form";
+import DeleteHandler from "@/components/delete-handler";
 import type { Note, Topic } from "@shared/schema";
 
 export default function Notes() {
@@ -16,7 +18,7 @@ export default function Notes() {
 
   const getTopicName = (topicId: string | null) => {
     if (!topicId) return "General";
-    const topic = topics.find(t => t.id === topicId);
+    const topic = topics.find(t => t._id?.toString() === topicId);
     return topic?.name || "Unknown Topic";
   };
 
@@ -35,10 +37,7 @@ export default function Notes() {
           
           <div className="flex items-center space-x-4">
             <SearchBar onUploadClick={() => {}} />
-            <Button className="bg-medical-blue text-white hover:bg-blue-700">
-              <Plus className="w-4 h-4 mr-2" />
-              New Note
-            </Button>
+            <NoteForm mode="create" />
           </div>
         </div>
       </header>
@@ -47,7 +46,7 @@ export default function Notes() {
         {notes.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {notes.map((note) => (
-              <Card key={note.id} className="hover:shadow-md transition-shadow cursor-pointer">
+              <Card key={note._id?.toString()} className="hover:shadow-md transition-shadow cursor-pointer">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -55,16 +54,31 @@ export default function Notes() {
                         {note.title}
                       </h3>
                       <div className="text-xs text-gray-500">
-                        {getTopicName(note.topicId)}
+                        {getTopicName(note.topicId?.toString() || null)}
                       </div>
                     </div>
                     <div className="flex items-center space-x-1">
-                      <Button variant="ghost" size="sm">
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <NoteForm 
+                        mode="edit" 
+                        note={note}
+                        trigger={
+                          <Button variant="ghost" size="sm">
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        }
+                      />
+                      <DeleteHandler
+                        itemType="notes"
+                        itemName={note.title}
+                        itemId={note._id?.toString() || ""}
+                        queryKey={['/api/notes']}
+                        onDelete={() => {}}
+                        trigger={
+                          <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        }
+                      />
                     </div>
                   </div>
                 </CardHeader>
@@ -95,10 +109,7 @@ export default function Notes() {
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">No notes yet</h3>
             <p className="text-gray-600 mb-4">Start taking notes to organize your thoughts and key concepts</p>
-            <Button className="bg-medical-blue text-white hover:bg-blue-700">
-              <Plus className="w-4 h-4 mr-2" />
-              Create Your First Note
-            </Button>
+            <NoteForm mode="create" />
           </div>
         )}
       </main>

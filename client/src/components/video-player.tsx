@@ -17,6 +17,10 @@ export default function VideoPlayer({ videos }: VideoPlayerProps) {
     window.open(video.url, '_blank');
   };
 
+  if (!videos || videos.length === 0) {
+    return null;
+  }
+
   return (
     <Card>
       <div className="p-6 border-b border-gray-200">
@@ -32,7 +36,7 @@ export default function VideoPlayer({ videos }: VideoPlayerProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {videos.slice(0, 4).map((video) => (
             <div 
-              key={video.id}
+              key={video._id?.toString() || video.url}
               className="group cursor-pointer"
               onClick={() => handleVideoClick(video)}
             >
@@ -55,7 +59,7 @@ export default function VideoPlayer({ videos }: VideoPlayerProps) {
                 </div>
                 {video.duration && (
                   <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                    {video.duration}
+                    {Math.floor(video.duration / 60)}:{(video.duration % 60).toString().padStart(2, '0')}
                   </div>
                 )}
               </div>

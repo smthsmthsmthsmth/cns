@@ -10,9 +10,26 @@ import Videos from "@/pages/videos";
 import Schedule from "@/pages/schedule";
 import Bookmarks from "@/pages/bookmarks";
 import Notes from "@/pages/notes";
+import PdfViewerPage from "@/pages/pdf-viewer";
+import LoginPage from "@/pages/login";
+import RegisterPage from "@/pages/register";
 import Sidebar from "@/components/sidebar";
+import AuthDebug from "@/components/auth-debug";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 
 function Router() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return (
+      <Switch>
+        <Route path="/login" component={LoginPage} />
+        <Route path="/register" component={RegisterPage} />
+        <Route component={LoginPage} />
+      </Switch>
+    );
+  }
+
   return (
     <div className="min-h-screen flex bg-gray-50">
       <Sidebar />
@@ -20,10 +37,13 @@ function Router() {
         <Switch>
           <Route path="/" component={Dashboard} />
           <Route path="/study-guides" component={StudyGuides} />
+          <Route path="/study-guides/:id" component={PdfViewerPage} />
           <Route path="/videos" component={Videos} />
           <Route path="/schedule" component={Schedule} />
           <Route path="/bookmarks" component={Bookmarks} />
           <Route path="/notes" component={Notes} />
+          <Route path="/login" component={LoginPage} />
+          <Route path="/register" component={RegisterPage} />
           <Route component={NotFound} />
         </Switch>
       </div>
@@ -34,10 +54,13 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+          <AuthDebug />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

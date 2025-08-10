@@ -3,6 +3,7 @@ import { Calendar, Clock, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import SearchBar from "@/components/search-bar";
+import ScheduleForm from "@/components/schedule-form";
 import type { ScheduleItem, Topic } from "@shared/schema";
 
 export default function Schedule() {
@@ -16,7 +17,7 @@ export default function Schedule() {
 
   const getTopicName = (topicId: string | null) => {
     if (!topicId) return "General";
-    const topic = topics.find(t => t.id === topicId);
+    const topic = topics.find(t => t._id?.toString() === topicId);
     return topic?.name || "Unknown Topic";
   };
 
@@ -48,10 +49,7 @@ export default function Schedule() {
           
           <div className="flex items-center space-x-4">
             <SearchBar onUploadClick={() => {}} />
-            <Button className="bg-medical-blue text-white hover:bg-blue-700">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Task
-            </Button>
+            <ScheduleForm mode="create" />
           </div>
         </div>
       </header>
@@ -96,7 +94,7 @@ export default function Schedule() {
                               <p className="text-sm text-gray-600 mb-2">{item.description}</p>
                             )}
                             <div className="text-xs text-gray-500">
-                              Topic: {getTopicName(item.topicId)}
+                              Topic: {getTopicName(item.topicId?.toString() || null)}
                             </div>
                           </div>
                         </div>

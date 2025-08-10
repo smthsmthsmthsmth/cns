@@ -60,7 +60,7 @@ export default function Dashboard() {
             <p className="text-gray-600">Welcome back! Continue your CNS studies</p>
           </div>
           
-          <SearchBar onUploadClick={() => {}} />
+          <SearchBar />
         </div>
       </header>
 
@@ -130,7 +130,10 @@ export default function Dashboard() {
           {/* Left Column - Current Study Focus */}
           <div className="lg:col-span-2 space-y-8">
             {/* Current Study Guide */}
-            <PdfViewer studyGuide={currentStudyGuide} />
+            <PdfViewer 
+              studyGuide={currentStudyGuide} 
+              showUploadInterface={!currentStudyGuide}
+            />
 
             {/* Related Videos Section */}
             <VideoPlayer videos={videos} />
@@ -152,7 +155,7 @@ export default function Dashboard() {
               <CardContent className="p-6">
                 <div className="space-y-4">
                   {todaySchedule.slice(0, 4).map((item) => (
-                    <div key={item.id} className="flex items-start space-x-3">
+                    <div key={item._id.toString()} className="flex items-start space-x-3">
                       <div className={`w-2 h-2 rounded-full mt-2 ${getStatusColor(item.status)}`} />
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm font-medium ${item.status === 'completed' ? 'line-through text-gray-500' : 'text-gray-900'}`}>
@@ -180,15 +183,15 @@ export default function Dashboard() {
               <CardContent className="p-6">
                 <div className="space-y-4">
                   {topics.map((topic) => (
-                    <div key={topic.id}>
+                    <div key={topic._id}>
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium text-gray-900">{topic.name}</span>
-                        <span className="text-sm text-gray-600">{topic.progress}%</span>
+                        <span className="text-sm text-gray-600">0%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div 
-                          className={`h-2 rounded-full ${topic.progress === 100 ? 'bg-complete-green' : topic.progress > 0 ? 'bg-progress-yellow' : 'bg-not-started-gray'}`}
-                          style={{ width: `${topic.progress}%` }}
+                          className="h-2 rounded-full bg-not-started-gray"
+                          style={{ width: '0%' }}
                         />
                       </div>
                     </div>
@@ -211,9 +214,9 @@ export default function Dashboard() {
               <CardContent className="p-6">
                 <div className="space-y-3">
                   {recentBookmarks.slice(0, 3).map((bookmark) => (
-                    <div key={bookmark.id} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <div key={bookmark._id} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
                       <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        {getBookmarkIcon(bookmark.type)}
+                        {getBookmarkIcon(bookmark.resourceType)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 truncate">{bookmark.title}</p>

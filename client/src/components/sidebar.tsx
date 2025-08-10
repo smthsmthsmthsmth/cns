@@ -1,12 +1,15 @@
 import { Link, useLocation } from "wouter";
-import { Brain, Home, Book, PlayCircle, Calendar, Bookmark, StickyNote, ChevronRight } from "lucide-react";
+import { Brain, Home, Book, PlayCircle, Calendar, Bookmark, StickyNote, ChevronRight, LogOut, User } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import ProgressRing from "./progress-ring";
+import { useAuth } from "@/contexts/AuthContext";
 import type { Topic, StudyProgress } from "@shared/schema";
 
 export default function Sidebar() {
   const [location] = useLocation();
+  const { user, logout } = useAuth();
   
   const { data: topics = [] } = useQuery<Topic[]>({
     queryKey: ['/api/topics'],
@@ -102,6 +105,34 @@ export default function Sidebar() {
           </div>
         </div>
       </nav>
+
+      {/* User Section */}
+      <div className="p-4 border-t border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+              <User className="w-4 h-4 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {user?.name || "User"}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {user?.email || "user@example.com"}
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={logout}
+            className="h-8 w-8 text-gray-500 hover:text-red-600"
+            title="Logout"
+          >
+            <LogOut className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

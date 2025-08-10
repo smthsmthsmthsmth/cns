@@ -1,6 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import SearchBar from "@/components/search-bar";
+import { BookOpen, Eye, Download } from "lucide-react";
+import { Link } from "wouter";
 import type { StudyGuide, Topic } from "@shared/schema";
 
 export default function StudyGuides() {
@@ -27,19 +30,19 @@ export default function StudyGuides() {
             <p className="text-gray-600">Manage your PDF study materials</p>
           </div>
           
-          <SearchBar onUploadClick={() => {}} />
+          <SearchBar />
         </div>
       </header>
 
       <main className="flex-1 overflow-y-auto p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {studyGuides.map((guide) => (
-            <Card key={guide.id} className="hover:shadow-md transition-shadow cursor-pointer">
+            <Card key={guide._id?.toString()} className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="font-medium text-gray-900">{guide.title}</h3>
-                    <p className="text-sm text-gray-600 mt-1">{getTopicName(guide.topicId)}</p>
+                    <p className="text-sm text-gray-600 mt-1">{getTopicName(guide.topicId?.toString() || null)}</p>
                   </div>
                   <div className="text-xs text-gray-500">
                     {guide.totalPages ? `${guide.totalPages} pages` : "PDF"}
@@ -47,7 +50,7 @@ export default function StudyGuides() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="text-sm text-gray-600">
                     Current page: {guide.currentPage || 1}
                   </div>
@@ -61,6 +64,31 @@ export default function StudyGuides() {
                   )}
                   <div className="text-xs text-gray-500">
                     Uploaded: {new Date(guide.uploadedAt!).toLocaleDateString()}
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  <div className="flex items-center space-x-2 pt-2">
+                    <Link href={`/study-guides/${guide._id}`}>
+                      <Button size="sm" className="flex-1">
+                        <Eye className="w-4 h-4 mr-2" />
+                        View PDF
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                        const link = document.createElement('a');
+                        link.href = `${baseUrl}/api/study-guides/${guide._id}/file`;
+                        link.download = guide.fileName;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      }}
+                    >
+                      <Download className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
               </CardContent>
