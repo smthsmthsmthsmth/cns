@@ -13,12 +13,12 @@ const storage = new MongoStorage();
 // CORS configuration
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  const allowedOrigins = [
-    'http://localhost:5173', 
-    'http://localhost:5000',
-    'https://neuroguide-client.vercel.app', // Update with your actual Vercel domain
-    'https://neuroguide-client-git-main-yourusername.vercel.app' // Update with your actual Vercel preview domain
-  ];
+                const allowedOrigins = [
+                'http://localhost:5173',
+                'http://localhost:5000',
+                'https://cns-urpo.vercel.app', // Your actual Vercel frontend domain
+                'https://cns-e9ar.onrender.com' // Your Render server domain
+              ];
   
   if (origin && allowedOrigins.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
