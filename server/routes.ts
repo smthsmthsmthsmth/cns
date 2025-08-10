@@ -52,6 +52,11 @@ const upload = multer({
 }).single('pdf');
 
 export async function registerRoutes(app: Express) {
+  // Health check endpoint for Render
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
   const storage = new MongoStorage();
 
   // Authentication routes

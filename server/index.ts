@@ -12,7 +12,14 @@ const storage = new MongoStorage();
 // CORS configuration
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (origin === 'http://localhost:5173' || origin === 'http://localhost:5000') {
+  const allowedOrigins = [
+    'http://localhost:5173', 
+    'http://localhost:5000',
+    'https://neuroguide-client.vercel.app', // Update with your actual Vercel domain
+    'https://neuroguide-client-git-main-yourusername.vercel.app' // Update with your actual Vercel preview domain
+  ];
+  
+  if (origin && allowedOrigins.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
   }
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -102,8 +109,15 @@ app.use((req, res, next) => {
     // Get port from environment or default to 5000
     const port = parseInt(process.env.PORT || '5000', 10);
     
-    const server = app.listen(port, 'localhost', () => {
-      console.log(`🚀 NeuroGuide app running at: http://localhost:${port}`);
+    // Always bind to 0.0.0.0 for production deployment
+    const bindAddress = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+    
+    const server = app.listen(port, bindAddress, () => {
+      if (bindAddress === '0.0.0.0') {
+        console.log(`🚀 NeuroGuide app running on port ${port}`);
+      } else {
+        console.log(`🚀 NeuroGuide app running at: http://localhost:${port}`);
+      }
     });
 
     // Handle server errors
@@ -112,9 +126,9 @@ app.use((req, res, next) => {
         console.error(`❌ Port ${port} is already in use. Try a different port.`);
         process.exit(1);
       } else if (error.code === 'ENOTSUP') {
-        console.error(`❌ Port binding not supported. Trying localhost instead.`);
-        server.listen(port, 'localhost', () => {
-          console.log(`🚀 NeuroGuide app running at: http://localhost:${port}`);
+        console.error(`❌ Port binding not supported. Trying 0.0.0.0 instead.`);
+        server.listen(port, '0.0.0.0', () => {
+          console.log(`🚀 NeuroGuide app running on port ${port}`);
         });
       } else {
         console.error('❌ Server error:', error);
