@@ -32,7 +32,13 @@ async function buildServer() {
         // Other dependencies
         'ws', 'zlib', 'memorystore', 'dotenv', 'zod',
         // Development dependencies that shouldn't be bundled
-        '@babel/*', 'lightningcss', 'fsevents', 'esbuild', 'vite', 'tsx', 'typescript'
+        '@babel/*', 'lightningcss', 'fsevents', 'esbuild', 'vite', 'tsx', 'typescript',
+        // Vite and React related
+        '@vitejs/plugin-react', 'react', 'react-dom', 'react-refresh',
+        // Additional Vite internals
+        'vite-plugin-react', 'vite-plugin-react-refresh', 'react-refresh/babel',
+        // File system and path utilities
+        'fs-extra', 'node:fs', 'node:path', 'node:module', 'node:url'
       ],
       sourcemap: false,
       minify: true,

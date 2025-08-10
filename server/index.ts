@@ -2,8 +2,9 @@ import express, { Request, Response, NextFunction } from "express";
 import { connectToDatabase } from "./database";
 import { MongoStorage } from "./storage";
 import { registerRoutes, registerMulterErrorHandling } from "./routes";
-import { setupVite } from "./vite";
-import { serveStatic } from "./vite";
+// Only import Vite in development
+// import { setupVite } from "./vite";
+// import { serveStatic } from "./vite";
 import "dotenv/config";
 
 const app = express();
@@ -105,13 +106,12 @@ app.use((req, res, next) => {
 
       next();
     });
-    
-    // Get port from environment or default to 5000
+
     const port = parseInt(process.env.PORT || '5000', 10);
-    
+
     // Always bind to 0.0.0.0 for production deployment
     const bindAddress = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
-    
+
     const server = app.listen(port, bindAddress, () => {
       if (bindAddress === '0.0.0.0') {
         console.log(`🚀 NeuroGuide app running on port ${port}`);
@@ -120,7 +120,6 @@ app.use((req, res, next) => {
       }
     });
 
-    // Handle server errors
     server.on('error', (error: any) => {
       if (error.code === 'EADDRINUSE') {
         console.error(`❌ Port ${port} is already in use. Try a different port.`);
@@ -136,37 +135,37 @@ app.use((req, res, next) => {
       }
     });
 
-    // Error handling middleware (should be AFTER route registration)
-    app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    // Global error handler
+    app.use((error: any, req: Request, res: Response, next: NextFunction) => {
       console.error('Server error:', {
-        message: err.message,
-        stack: err.stack,
+        message: error.message,
+        stack: error.stack,
         url: req.url,
         method: req.method,
         contentType: req.headers['content-type']
       });
-      
-      const status = err.status || err.statusCode || 500;
-      const message = err.message || "Internal Server Error";
 
-      // Don't send response if headers already sent
+      const status = error.status || error.statusCode || 500;
+      const message = error.message || 'Internal Server Error';
+
       if (!res.headersSent) {
-        res.status(status).json({ 
-          error: message,
-          ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-        });
+        res.status(status).json({ error: message });
       }
     });
 
-    // Setup Vite in development
-    if (app.get("env") === "development") {
+    // Serve static files or Vite dev server based on environment
+    if (process.env.NODE_ENV === 'development') {
+      // Set up Vite dev server
+      const { setupVite } = await import('./vite');
       await setupVite(app, server);
     } else {
+      // Serve static files in production
+      const { serveStatic } = await import('./vite');
       serveStatic(app);
     }
 
   } catch (error) {
-    console.error("Failed to start server:", error);
+    console.error('Failed to start server:', error);
     process.exit(1);
   }
 })();
